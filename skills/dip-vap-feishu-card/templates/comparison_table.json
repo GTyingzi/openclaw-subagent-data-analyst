@@ -1,0 +1,46 @@
+{
+  "schema": "2.0",
+  "config": {
+    "wide_screen_mode": true
+  },
+  "header": {
+    "title": {
+      "tag": "plain_text",
+      "content": "{{title}}"
+    },
+    "subtitle": {
+      "tag": "plain_text",
+      "content": "{{subtitle}}"
+    },
+    "template": "{{header_color}}"
+  },
+  "body": {
+    "elements": [
+      {
+        "tag": "markdown",
+        "content": "{{insight_text}}"
+      },
+      {
+        "tag": "table",
+        "page_size": 10,
+        "row_height": "low",
+        "header_style": {
+          "text_align": "center",
+          "text_size": "normal",
+          "background_style": "grey",
+          "text_color": "grey",
+          "bold": true
+        },
+        "columns": "{{columns}}",
+        "rows": "{{rows}}"
+      },
+      {
+        "tag": "hr"
+      },
+      {
+        "tag": "markdown",
+        "content": "{{footer_text}}"
+      }
+    ]
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "version": "2026-03-06",
+  "templates": [
+    {
+      "id": "trend_line",
+      "name": "趋势折线图",
+      "match": ["趋势", "走势", "变化", "最近.*天", "按天", "按周", "按月", "时间"],
+      "chart_type": "line",
+      "file": "trend_line.json"
+    },
+    {
+      "id": "rank_bar",
+      "name": "排行榜条形图",
+      "match": ["排名", "Top", "排行", "最多", "最高", "哪个.*最"],
+      "chart_type": "bar",
+      "file": "rank_bar.json"
+    },
+    {
+      "id": "comparison_table",
+      "name": "数据对比表格",
+      "match": ["对比", "比较", "各.*情况", "明细", "详情", "分别"],
+      "chart_type": "table",
+      "file": "comparison_table.json"
+    },
+    {
+      "id": "kpi_summary",
+      "name": "KPI概览",
+      "match": ["概览", "总览", "汇总", "怎么样", "情况如何", "简报"],
+      "chart_type": "column_set",
+      "file": "kpi_summary.json"
+    }
+  ]
+}

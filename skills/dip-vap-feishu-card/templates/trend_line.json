@@ -1,0 +1,59 @@
+{
+  "schema": "2.0",
+  "config": {
+    "wide_screen_mode": true
+  },
+  "header": {
+    "title": {
+      "tag": "plain_text",
+      "content": "{{title}}"
+    },
+    "subtitle": {
+      "tag": "plain_text",
+      "content": "{{subtitle}}"
+    },
+    "template": "{{header_color}}"
+  },
+  "body": {
+    "elements": [
+      {
+        "tag": "markdown",
+        "content": "{{insight_text}}"
+      },
+      {
+        "tag": "chart",
+        "chart_spec": {
+          "type": "line",
+          "data": {
+            "values": "{{data_values}}"
+          },
+          "xField": "{{x_field}}",
+          "yField": "{{y_field}}",
+          "seriesField": "{{series_field}}",
+          "xAxis": {
+            "title": {
+              "text": "{{x_axis_title}}"
+            }
+          },
+          "yAxis": {
+            "title": {
+              "text": "{{y_axis_title}}"
+            }
+          },
+          "title": {
+            "text": "{{chart_title}}"
+          },
+          "height": 300
+        },
+        "aspect_ratio": "16:9"
+      },
+      {
+        "tag": "hr"
+      },
+      {
+        "tag": "markdown",
+        "content": "{{footer_text}}"
+      }
+    ]
+  }
+}

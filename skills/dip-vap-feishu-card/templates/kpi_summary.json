@@ -1,0 +1,76 @@
+{
+  "schema": "2.0",
+  "config": {
+    "wide_screen_mode": true
+  },
+  "header": {
+    "title": {
+      "tag": "plain_text",
+      "content": "{{title}}"
+    },
+    "subtitle": {
+      "tag": "plain_text",
+      "content": "{{subtitle}}"
+    },
+    "template": "{{header_color}}"
+  },
+  "body": {
+    "elements": [
+      {
+        "tag": "markdown",
+        "content": "{{insight_text}}"
+      },
+      {
+        "tag": "column_set",
+        "flex_mode": "bisect",
+        "background_style": "default",
+        "horizontal_spacing": "default",
+        "columns": [
+          {
+            "tag": "column",
+            "width": "weighted",
+            "weight": 1,
+            "vertical_align": "center",
+            "elements": [
+              {
+                "tag": "markdown",
+                "content": "<font color='blue'>**{{kpi_1_value}}**</font>\n{{kpi_1_label}}"
+              }
+            ]
+          },
+          {
+            "tag": "column",
+            "width": "weighted",
+            "weight": 1,
+            "vertical_align": "center",
+            "elements": [
+              {
+                "tag": "markdown",
+                "content": "<font color='green'>**{{kpi_2_value}}**</font>\n{{kpi_2_label}}"
+              }
+            ]
+          },
+          {
+            "tag": "column",
+            "width": "weighted",
+            "weight": 1,
+            "vertical_align": "center",
+            "elements": [
+              {
+                "tag": "markdown",
+                "content": "<font color='orange'>**{{kpi_3_value}}**</font>\n{{kpi_3_label}}"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "tag": "hr"
+      },
+      {
+        "tag": "markdown",
+        "content": "{{footer_text}}"
+      }
+    ]
+  }
+}

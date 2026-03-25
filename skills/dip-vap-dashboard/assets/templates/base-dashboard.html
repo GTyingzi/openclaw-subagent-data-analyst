@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据仪表板</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1" crossorigin="anonymous"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; background: #f5f7fa; }
+        .dashboard-container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        .dashboard-header { background: white; padding: 24px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .dashboard-header h1 { font-size: 24px; color: #333; margin-bottom: 8px; }
+        .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin-bottom: 20px; }
+        .kpi-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .kpi-label { font-size: 14px; color: #666; margin-bottom: 8px; }
+        .kpi-value { font-size: 32px; font-weight: bold; color: #333; margin-bottom: 4px; }
+        .kpi-change { font-size: 14px; }
+        .kpi-change.positive { color: #52c41a; }
+        .kpi-change.negative { color: #f5222d; }
+        .chart-section { background: white; padding: 24px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .chart-title { font-size: 18px; font-weight: 600; color: #333; margin-bottom: 16px; }
+        .chart-container { position: relative; height: 400px; }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <header class="dashboard-header">
+            <h1>📊 数据仪表板</h1>
+            <p>数据更新时间：<span id="updateTime"></span></p>
+        </header>
+
+        <section class="kpi-row">
+            <div class="kpi-card">
+                <div class="kpi-label">总订单量</div>
+                <div class="kpi-value" id="kpi1">0</div>
+                <div class="kpi-change positive" id="kpi1Change">-</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">总交付量</div>
+                <div class="kpi-value" id="kpi2">0</div>
+                <div class="kpi-change positive" id="kpi2Change">-</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">转化率</div>
+                <div class="kpi-value" id="kpi3">0%</div>
+                <div class="kpi-change positive" id="kpi3Change">-</div>
+            </div>
+        </section>
+
+        <section class="chart-section">
+            <div class="chart-title">趋势图</div>
+            <div class="chart-container">
+                <canvas id="trendChart"></canvas>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // DATA HERE - Replace with your data
+        const data = {
+            updateTime: '2026-03-13 10:20',
+            kpis: [
+                { value: 12567, change: '+2.3%', positive: true },
+                { value: 11234, change: '+1.8%', positive: true },
+                { value: 89.4, change: '-0.5%', positive: false }
+            ],
+            trend: [
+                { date: '03-01', value: 12345 },
+                { date: '03-02', value: 12456 },
+                { date: '03-03', value: 12567 }
+            ]
+        };
+
+        // Update KPIs
+        document.getElementById('updateTime').textContent = data.updateTime;
+        document.getElementById('kpi1').textContent = data.kpis[0].value.toLocaleString();
+        document.getElementById('kpi1Change').textContent = data.kpis[0].change;
+        document.getElementById('kpi1Change').className = 'kpi-change ' + (data.kpis[0].positive ? 'positive' : 'negative');
+        document.getElementById('kpi2').textContent = data.kpis[1].value.toLocaleString();
+        document.getElementById('kpi2Change').textContent = data.kpis[1].change;
+        document.getElementById('kpi2Change').className = 'kpi-change ' + (data.kpis[1].positive ? 'positive' : 'negative');
+        document.getElementById('kpi3').textContent = data.kpis[2].value + '%';
+        document.getElementById('kpi3Change').textContent = data.kpis[2].change;
+        document.getElementById('kpi3Change').className = 'kpi-change ' + (data.kpis[2].positive ? 'positive' : 'negative');
+
+        // Create trend chart
+        const ctx = document.getElementById('trendChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: data.trend.map(d => d.date),
+                datasets: [{
+                    label: '订单量',
+                    data: data.trend.map(d => d.value),
+                    borderColor: '#1890ff',
+                    backgroundColor: 'rgba(24, 144, 255, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: true, position: 'top' },
+                    tooltip: { mode: 'index', intersect: false }
+                },
+                scales: {
+                    y: { beginAtZero: false, ticks: { callback: value => value.toLocaleString() } }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
