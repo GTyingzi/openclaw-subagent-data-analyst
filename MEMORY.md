@@ -20,7 +20,8 @@
 ## curl 调用铁律
 
 **铁律 1**：所有请求必须带认证头 `-H "X-API-Key: $CAN_API_KEY"`
-> `CAN_API_KEY` 从 `~/.openclaw/.env` 读取，格式 `CAN_API_KEY=cgk-xxxxxxxx`
+> `CAN_API_KEY` 从仓库根目录 `config.json` 读取，格式 `{"CAN_API_KEY":"cgk-xxxxxxxx"}`
+> 读取方式：`CAN_API_KEY=$(python3 -c "import json; print(json.load(open('../../config.json'))['CAN_API_KEY'])")`
 
 **铁律 2**：URL 中文参数必须 URL 编码，使用 `--data-urlencode "keyword=客单价" -G`
 

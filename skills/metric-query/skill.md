@@ -17,7 +17,7 @@ description: 构建指标平台（语义层）的指标数据查询 API 请求�
 
 **⚠️ 调用 Gateway 的两条铁律**：
 
-1.   **所有请求必须加 API Key 认证头 `-H "X-API-Key: $CAN_API_KEY"`**，`$CAN_API_KEY` 从环境变量读取（用户需在 `~/.openclaw/.env` 中配置 `CAN_API_KEY=cgk-xxxxxxxx`），未携带或无效 Key 将返回 401
+1.   **所有请求必须加 API Key 认证头 `-H "X-API-Key: $CAN_API_KEY"`**，`$CAN_API_KEY` 从仓库根目录的 `config.json` 读取（相对路径为 `../../config.json`，绝对路径取决于安装位置），读取方式：`CAN_API_KEY=$(python3 -c "import json; print(json.load(open('../../config.json'))['CAN_API_KEY'])")`，未携带或无效 Key 将返回 401
 2.   **URL 中文参数必须 URL 编码**，使用 `--data-urlencode` + `-G` 让 curl 自动编码，禁止中文直接拼入 URL
 
 > 示例：
