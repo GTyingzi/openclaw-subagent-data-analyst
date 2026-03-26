@@ -93,18 +93,33 @@ git pull origin main
 
 ### 2a. 配置 CAN_API_KEY
 
-```bash
-# 创建 OpenClaw 配置目录（如已存在则跳过）
-mkdir -p ~/.openclaw
+`CAN_API_KEY` 存储在 data-analyst 仓库根目录的 `config.json` 中，读取方式：
 
-# 将 API Key 写入环境变量文件（替换为真实 Key）
-echo "CAN_API_KEY=cgk-your-api-key-here" >> ~/.openclaw/.env
+```bash
+CAN_API_KEY=$(cat "$AGENT_DIR/config.json" | python3 -c "import sys,json; print(json.load(sys.stdin)['CAN_API_KEY'])")
+```
+
+如果 `config.json` 中的值仍为占位符（`cgk-your-api-key-here`），需要先填入真实 Key：
+
+```bash
+# 查看当前值
+cat "$AGENT_DIR/config.json"
+
+# 修改为真实 Key（替换 cgk-your-api-key-here）
+python3 -c "
+import json, sys
+path = '$AGENT_DIR/config.json'
+cfg = json.load(open(path))
+cfg['CAN_API_KEY'] = 'cgk-your-real-key-here'
+json.dump(cfg, open(path,'w'), indent=2)
+print('已更新 config.json')
+"
 ```
 
 验证：
 ```bash
-grep "CAN_API_KEY" ~/.openclaw/.env
-# 应输出：CAN_API_KEY=cgk-xxxxxx
+python3 -c "import json; cfg=json.load(open('$AGENT_DIR/config.json')); print(cfg.get('CAN_API_KEY','未配置'))"
+# 应输出：cgk-xxxxxx
 ```
 
 > ⚠️ **必须执行**：`CAN_API_KEY` 未配置时，指标查询功能将返回 401 错误。
@@ -335,7 +350,12 @@ openclaw gateway restart
 ls "$AGENT_DIR/skills/"
 
 # 检查 API Key 配置
-grep -q "^CAN_API_KEY=cgk-" ~/.openclaw/.env && echo "✅ API Key 配置正常" || echo "❌ API Key 未配置"
+python3 -c "
+import json
+cfg = json.load(open('$AGENT_DIR/config.json'))
+key = cfg.get('CAN_API_KEY','')
+print('✅ API Key 配置正常' if key.startswith('cgk-') else '❌ API Key 未配置或格式错误')
+"
 
 # 检查 agent 注册
 openclaw status
@@ -348,7 +368,7 @@ openclaw status
 - [ ] `channels.feishu.accounts` 中**没有** `"data-analyst"` 键
 - [ ] 主 Agent 的 TOOLS.md 包含 `sessions_send` 调用规范
 - [ ] `tools.agentToAgent.enabled` 为 `true`，allow 列表含主 Agent 和 data-analyst
-- [ ] `~/.openclaw/.env` 中 `CAN_API_KEY` 存在且以 `cgk-` 开头
+- [ ] `config.json` 中 `CAN_API_KEY` 存在且以 `cgk-` 开头
 
 > 如果任一项不通过，回到 Step 2 修复。
 
@@ -379,7 +399,7 @@ openclaw status
 
 | 问题 | 解决 |
 |------|------|
-| CAN_API_KEY 401 | 确认 `~/.openclaw/.env` 中 Key 格式正确，无多余空格 |
+| CAN_API_KEY 401 | 确认 `config.json` 中 Key 格式正确，以 `cgk-` 开头，无多余空格 |
 | Gateway 连接超时 | 检查网络连接，确认可以访问 gateway.can.aloudata.com |
 | 子 Agent 超时 | 调大 `runTimeoutSeconds`（推荐 600-1800） |
 | 飞书卡片发送失败 | 检查飞书 appId/appSecret 配置 |

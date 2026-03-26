@@ -42,10 +42,15 @@ git clone <repo-url> data-analyst
 
 ### 2. 配置 API Key
 
-```bash
-mkdir -p ~/.openclaw
-echo "CAN_API_KEY=cgk-your-api-key-here" >> ~/.openclaw/.env
+`CAN_API_KEY` 存储在仓库根目录的 `config.json` 中：
+
+```json
+{
+  "CAN_API_KEY": "cgk-your-api-key-here"
+}
 ```
+
+将 `cgk-your-api-key-here` 替换为真实的 API Key 后保存即可。如需获取 Key，请联系数据平台管理员。
 
 ### 3. 注册 Agent 并配置主 Agent
 
@@ -55,7 +60,7 @@ echo "CAN_API_KEY=cgk-your-api-key-here" >> ~/.openclaw/.env
 
 ```bash
 openclaw status  # 确认 data-analyst 出现，且 default 标记在主 Agent
-grep "CAN_API_KEY" ~/.openclaw/.env  # 确认 API Key 已配置
+cat config.json  # 确认 CAN_API_KEY 已填写
 ```
 
 ---
@@ -112,8 +117,8 @@ openclaw-subagent-data-analyst/
 
 | 技能 | 依赖 CAN_API_KEY | 依赖飞书配置 | 配置位置 |
 |------|:---:|:---:|----------|
-| metric-query | ✓ | — | `~/.openclaw/.env` |
-| metric-attribution | ✓ | — | `~/.openclaw/.env` |
+| metric-query | ✓ | — | `config.json` |
+| metric-attribution | ✓ | — | `config.json` |
 | dip-vap-feishu-card | — | ✓ | `~/.openclaw/openclaw.json` |
 | dip-vap-dashboard | — | — | 无需配置 |
 
