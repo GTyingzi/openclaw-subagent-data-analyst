@@ -109,6 +109,7 @@ openclaw-subagent-data-analyst/
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| [v0.2](./version/0-2.md) | 2026-03-26 | CAN_API_KEY 改从 config.json 读取 |
 | [v0.1](./version/0-1.md) | 2026-03-25 | 初始发布 |
 
 ---
