@@ -6,7 +6,7 @@
 
 ## Skill 工具
 
-本 subagent 共有四个 skill，按使用场景分为数据查询类和输出类。
+本 subagent 共有八个 skill，按使用场景分为数据查询类、分析类、报告类和输出类。
 
 ### metric-query
 | 属性 | 值 |
@@ -86,6 +86,83 @@
 
 ---
 
+### anomaly-detection
+| 属性 | 值 |
+|------|----|
+| 文件位置 | `skills/anomaly-detection/SKILL.md` |
+| 数据来源 | 委派 `metric-query` 执行，不直接调用 Gateway API |
+
+**主要功能**
+- 对指标当前值与历史基线进行比较，判断是否存在异常波动
+- 支持单指标检测和批量健康巡检（多指标异常扫描）
+- 输出结构化异常检测报告（正常/异常/风险，附置信说明）
+
+**触发时机**：用户询问指标是否正常/异常、做健康巡检或异常扫描、检查数据有没有问题时
+
+**使用规范**
+- 数据查询必须通过 `metric-query` Skill 完成，不直接调用 Gateway API
+- 检测到异常时，可建议用户使用 `metric-attribution` 做进一步归因
+
+---
+
+### forecast-simulation
+| 属性 | 值 |
+|------|----|
+| 文件位置 | `skills/forecast-simulation/SKILL.md` |
+| 数据来源 | 委派 `metric-query` 获取历史数据，本地做数学推算 |
+
+**主要功能**
+- 趋势预测：基于历史数据拟合，外推未来走势
+- 目标缺口分析：计算当前进度与目标的差距，推算日均需要多少
+- What-if 模拟：模拟某个条件改变后对指标的影响
+- 耗尽/饱和预测：预测库存耗尽时间、容量饱和时间等
+
+**触发时机**：用户询问未来走势、目标是否可达、或模拟假设场景（"月底能到多少""提升10%会怎样""还差多少"）时
+
+**使用规范**
+- 本 Skill 为数学推算（趋势拟合、公式模拟），**非机器学习预测模型**
+- 所有推算结果必须附带前提假设和不确定性说明
+
+---
+
+### analysis-report
+| 属性 | 值 |
+|------|----|
+| 文件位置 | `skills/analysis-report/SKILL.md` |
+| 数据来源 | 编排层，所有分析委派能力层 Skill 执行 |
+
+**主要功能**
+- 按报告模板（月报/周报/专项分析等）确定所需板块
+- 依次调度 `metric-query`、`anomaly-detection`、`metric-attribution`、`forecast-simulation` 执行各板块分析
+- 将各板块结果串联为连贯的分析叙事，输出完整文档
+
+**触发时机**：用户需要一份完整的、多板块分析文档时（"出月报""做分析报告""数据复盘""经营简报"等）
+
+**使用规范**
+- 本 Skill 是**一次性执行**（现在就出一份报告）；若用户含"以后/每月/定期"等重复意图，转 `scheduled-report`
+- 不包含分析逻辑，所有数据查询和分析工作委派给能力层 Skill
+
+---
+
+### scheduled-report
+| 属性 | 值 |
+|------|----|
+| 文件位置 | `skills/scheduled-report/SKILL.md` |
+| 依赖配置 | OpenClaw cron 调度器（`openclaw cron add`） |
+
+**主要功能**
+- 从当前对话中提取已完成的分析步骤（录制）
+- 将分析步骤打包为自包含、可独立执行的 prompt（打包）
+- 通过 `openclaw cron add` 创建定时任务，按指定频率自动重放（调度）
+
+**触发时机**：用户表达中含"定时/定期/每X/以后都"等重复执行意图时（如"每周都跑一次""以后每月出月报"）
+
+**使用规范**
+- **前提条件**：对话中必须有已完成的分析历史；若无，应先引导用户完成一轮分析再触发本 Skill
+- 本 Skill 不定义"怎么分析"，只负责"把你刚才做的分析录下来，变成能定时重放的任务"
+
+---
+
 ## Bash / curl 工具
 
 metric-query 和 metric-attribution 两个 skill 均通过 **curl** 调用 Gateway API，以下为统一规范。
@@ -124,6 +201,10 @@ curl -H "X-API-Key: $CAN_API_KEY" \
 |-------|:---:|:---:|----------|
 | metric-query（curl） | ✓ | — | `~/.openclaw/.env` |
 | metric-attribution（curl） | ✓ | — | `~/.openclaw/.env` |
+| anomaly-detection | — | — | 委派 metric-query，无直接依赖 |
+| forecast-simulation | — | — | 委派 metric-query，无直接依赖 |
+| analysis-report | — | — | 委派能力层 Skill，无直接依赖 |
+| scheduled-report | — | — | 依赖 OpenClaw cron 调度器 |
 | dip-vap-feishu-card | — | ✓ | `~/.openclaw/openclaw.json` |
 | dip-vap-dashboard | — | — | 无需配置 |
 
